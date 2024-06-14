@@ -6,7 +6,7 @@
 		"description": "Gregoriette chat.",
 		"version": "${modVersion}",
 		"mcversion": "${minecraftVersion}",
-		"url": "https://github.com/SinTh0r4s/MyMod",
+		"url": "https://github.com/FarDragi/gregoriette",
 		"updateUrl": "",
 		"authorList": ["Gabriel-Paulucci"],
 		"credits": "",
