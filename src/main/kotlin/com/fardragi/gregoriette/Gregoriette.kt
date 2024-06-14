@@ -1,6 +1,9 @@
 package com.fardragi.gregoriette
 
 import com.fardragi.gregoriette.discord.DiscordBot
+import com.fardragi.gregoriette.exceptions.GregorietteException
+import com.fardragi.gregoriette.listeners.PlayerListener
+import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.SidedProxy
 import cpw.mods.fml.common.event.FMLInitializationEvent
@@ -20,38 +23,42 @@ import org.apache.logging.log4j.Logger
     acceptedMinecraftVersions = "[1.7.10]",
     acceptableRemoteVersions = "*")
 class Gregoriette {
-  private var bot: DiscordBot? = null
+  private var _bot: DiscordBot? = null
+  val bot: DiscordBot
+    get() = _bot ?: throw GregorietteException("Fail get bot")
+  val logger
+    get() = LOG
 
-  @Mod.EventHandler // preInit "Run before anything else. Read your config, create blocks, items,
-  // etc, and register them with the
-  // GameRegistry." (Remove if not needed)
+  @Mod.EventHandler
   fun preInit(event: FMLPreInitializationEvent) {
-    proxy!!.preInit(event)
+    proxy.preInit(event)
+    CoroutineScope(Dispatchers.IO).launch { _bot = DiscordBot() }
   }
 
-  @Mod.EventHandler // load "Do your mod setup. Build whatever data structures you care about.
-  // Register recipes." (Remove if not needed)
+  @Mod.EventHandler
   fun init(event: FMLInitializationEvent?) {
-    proxy!!.init(event)
-
-    CoroutineScope(Dispatchers.IO).launch { bot = DiscordBot() }
+    proxy.init(event)
   }
 
   @Mod.EventHandler // postInit "Handle interaction with other mods, complete your setup based on
   // this." (Remove if not needed)
   fun postInit(event: FMLPostInitializationEvent?) {
-    proxy!!.postInit(event)
+    proxy.postInit(event)
   }
 
-  @Mod.EventHandler // register server commands in this event handler (Remove if not needed)
+  @Mod.EventHandler
   fun serverStarting(event: FMLServerStartingEvent?) {
-    proxy!!.serverStarting(event)
+    proxy.serverStarting(event)
+    FMLCommonHandler.instance().bus().register(PlayerListener(this))
   }
 
   companion object {
     const val MODID: String = "gregoriette"
     @JvmField val LOG: Logger = LogManager.getLogger(MODID)
 
-    @SidedProxy(serverSide = "com.fardragi.gregoriette.CommonProxy") var proxy: CommonProxy? = null
+    @SidedProxy(serverSide = "com.fardragi.gregoriette.CommonProxy")
+    private var _proxy: CommonProxy? = null
+    val proxy: CommonProxy
+      get() = _proxy ?: throw GregorietteException("Fail get proxy")
   }
 }
