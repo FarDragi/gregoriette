@@ -1,27 +1,27 @@
-package com.fardragi.gregoriette;
+package com.fardragi.gregoriette
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import com.fardragi.gregoriette.Config.synchronizeConfiguration
+import cpw.mods.fml.common.event.FMLInitializationEvent
+import cpw.mods.fml.common.event.FMLPostInitializationEvent
+import cpw.mods.fml.common.event.FMLPreInitializationEvent
+import cpw.mods.fml.common.event.FMLServerStartingEvent
 
-public class CommonProxy {
+class CommonProxy {
+  // preInit "Run before anything else. Read your config, create blocks, items, etc, and register
+  // them with the
+  // GameRegistry." (Remove if not needed)
+  fun preInit(event: FMLPreInitializationEvent) {
+    synchronizeConfiguration(event.suggestedConfigurationFile)
+  }
 
-    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
-    // GameRegistry." (Remove if not needed)
-    public void preInit(FMLPreInitializationEvent event) {
-        Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
+  // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
+  // (Remove if not needed)
+  fun init(event: FMLInitializationEvent?) {}
 
-        Gregoriette.LOG.info(Config.greeting);
-        Gregoriette.LOG.info("I am MyMod at version " + Tags.VERSION);
-    }
+  // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if
+  // not needed)
+  fun postInit(event: FMLPostInitializationEvent?) {}
 
-    // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
-    public void init(FMLInitializationEvent event) {}
-
-    // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
-    public void postInit(FMLPostInitializationEvent event) {}
-
-    // register server commands in this event handler (Remove if not needed)
-    public void serverStarting(FMLServerStartingEvent event) {}
+  // register server commands in this event handler (Remove if not needed)
+  fun serverStarting(event: FMLServerStartingEvent?) {}
 }

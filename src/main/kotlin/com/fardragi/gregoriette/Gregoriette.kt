@@ -1,14 +1,17 @@
-package com.fardragi.gregoriette;
+package com.fardragi.gregoriette
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import com.fardragi.gregoriette.discord.DiscordBot
+import cpw.mods.fml.common.Mod
+import cpw.mods.fml.common.SidedProxy
+import cpw.mods.fml.common.event.FMLInitializationEvent
+import cpw.mods.fml.common.event.FMLPostInitializationEvent
+import cpw.mods.fml.common.event.FMLPreInitializationEvent
+import cpw.mods.fml.common.event.FMLServerStartingEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 @Mod(
     modid = Gregoriette.MODID,
@@ -16,36 +19,39 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
     name = "Gregoriette",
     acceptedMinecraftVersions = "[1.7.10]",
     acceptableRemoteVersions = "*")
-public class Gregoriette {
+class Gregoriette {
+  private var bot: DiscordBot? = null
 
-    public static final String MODID = "gregoriette";
-    public static final Logger LOG = LogManager.getLogger(MODID);
+  @Mod.EventHandler // preInit "Run before anything else. Read your config, create blocks, items,
+  // etc, and register them with the
+  // GameRegistry." (Remove if not needed)
+  fun preInit(event: FMLPreInitializationEvent) {
+    proxy!!.preInit(event)
+  }
 
-    @SidedProxy(serverSide = "com.fardragi.gregoriette.CommonProxy")
-    public static CommonProxy proxy;
+  @Mod.EventHandler // load "Do your mod setup. Build whatever data structures you care about.
+  // Register recipes." (Remove if not needed)
+  fun init(event: FMLInitializationEvent?) {
+    proxy!!.init(event)
 
-    @Mod.EventHandler
-    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
-    // GameRegistry." (Remove if not needed)
-    public void preInit(FMLPreInitializationEvent event) {
-        proxy.preInit(event);
-    }
+    CoroutineScope(Dispatchers.IO).launch { bot = DiscordBot() }
+  }
 
-    @Mod.EventHandler
-    // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
-    public void init(FMLInitializationEvent event) {
-        proxy.init(event);
-    }
+  @Mod.EventHandler // postInit "Handle interaction with other mods, complete your setup based on
+  // this." (Remove if not needed)
+  fun postInit(event: FMLPostInitializationEvent?) {
+    proxy!!.postInit(event)
+  }
 
-    @Mod.EventHandler
-    // postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
-    public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit(event);
-    }
+  @Mod.EventHandler // register server commands in this event handler (Remove if not needed)
+  fun serverStarting(event: FMLServerStartingEvent?) {
+    proxy!!.serverStarting(event)
+  }
 
-    @Mod.EventHandler
-    // register server commands in this event handler (Remove if not needed)
-    public void serverStarting(FMLServerStartingEvent event) {
-        proxy.serverStarting(event);
-    }
+  companion object {
+    const val MODID: String = "gregoriette"
+    @JvmField val LOG: Logger = LogManager.getLogger(MODID)
+
+    @SidedProxy(serverSide = "com.fardragi.gregoriette.CommonProxy") var proxy: CommonProxy? = null
+  }
 }

@@ -1,20 +1,21 @@
-package com.fardragi.gregoriette;
+package com.fardragi.gregoriette
 
-import java.io.File;
+import java.io.File
+import net.minecraftforge.common.config.Configuration
 
-import net.minecraftforge.common.config.Configuration;
+object Config {
+  var botToken: String = ""
 
-public class Config {
+  @JvmStatic
+  fun synchronizeConfiguration(configFile: File?) {
+    val configuration = Configuration(configFile)
 
-    public static String greeting = "Hello World";
+    botToken =
+        configuration.getString(
+            "bot_token", Configuration.CATEGORY_GENERAL, botToken, "Discord bot token")
 
-    public static void synchronizeConfiguration(File configFile) {
-        Configuration configuration = new Configuration(configFile);
-
-        greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
-
-        if (configuration.hasChanged()) {
-            configuration.save();
-        }
+    if (configuration.hasChanged()) {
+      configuration.save()
     }
+  }
 }
