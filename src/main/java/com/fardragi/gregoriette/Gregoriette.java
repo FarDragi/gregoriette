@@ -10,15 +10,18 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = Gregoriette.MODID, version = Tags.VERSION, name = "Gregoriette", acceptedMinecraftVersions = "[1.7.10]")
+@Mod(
+    modid = Gregoriette.MODID,
+    version = Tags.VERSION,
+    name = "Gregoriette",
+    acceptedMinecraftVersions = "[1.7.10]",
+    acceptableRemoteVersions = "*")
 public class Gregoriette {
 
     public static final String MODID = "gregoriette";
     public static final Logger LOG = LogManager.getLogger(MODID);
 
-    @SidedProxy(
-        clientSide = "com.fardragi.gregoriette.ClientProxy",
-        serverSide = "com.fardragi.gregoriette.CommonProxy")
+    @SidedProxy(serverSide = "com.fardragi.gregoriette.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler
